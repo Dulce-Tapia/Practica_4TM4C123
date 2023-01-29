@@ -95,22 +95,29 @@ extern void Configuracion_ADC1(void)
     ADC1 ->PSSI =  (1<<2)|(1<<0)|(1<<3);
 }
 
-extern void ADC0_In(uint16_t *Result)
+extern void ADC0_In1(uint16_t *Result)
 {
-    //ADC0 -> PSSI = 0x00000004; 
-    while ((ADC0->RIS&0x04)==0){}; //espera al convertidor 
-    Result[2]= ADC0 ->SSFIFO2&0xFFF; 
-    Result[1]= ADC0 ->SSFIFO2&0xFFF; 
-    Result[0]= ADC0 ->SSFIFO2&0xFFF; 
+    ADC0 -> PSSI = (1<<1); 
+    while ((ADC0->RIS&0x02)==0){}; //espera al convertidor 
+    Result[2]= ADC0 ->SSFIFO1&0xFFF; 
+    Result[1]= ADC0 ->SSFIFO1&0xFFF; 
+    Result[0]= ADC0 ->SSFIFO1&0xFFF; 
     ADC0 ->ISC = 0x0004;
 }
 
-extern void ADC1_In(uint16_t *Result1)
+extern void ADC1_In2(uint16_t *Result1)
 {
-    //ADC1 -> PSSI = 0x00000004; 
+    ADC1 -> PSSI = (1<<2); 
     while ((ADC1->RIS&0x04)==0){}; //espera al convertidor 
-    Result1[2]= ADC0 ->SSFIFO2&0xFFF; 
     Result1[1]= ADC1 ->SSFIFO2&0xFFF; 
     Result1[0]= ADC1 ->SSFIFO2&0xFFF; 
     ADC1 ->ISC = 0x0004;
+}
+
+extern void ADC1_In3(uint16_t *Result1)
+{
+    ADC1 -> PSSI = (1<<3); 
+    while ((ADC1->RIS&0x08)==0){}; //espera al convertidor 
+    Result1[2]= ADC0 ->SSFIFO3&0xFFF; 
+    ADC1 ->ISC = 0x0008;
 }
