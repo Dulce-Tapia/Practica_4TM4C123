@@ -24,6 +24,27 @@ extern void Configurar_GPIO(void)
     GPIOA->DEN = (1<<5)|(1<<4)|(1<<3)|(1<<2)|(1<<1)|(1<<0);          // 7) enable digital I/O on PA5-0
 
     // Configuración de interrupción de botones 
+    // Nota. porque en el puerto PD se encuentra ocupado 
+    //Limpiar los bits en los pines a utilizar pág. 664
+    GPIOA_AHB->IM |= (0<<5)|(0<<4)|(0<<3)|(0<<2)|(0<<1)|(0<<0); 
+    // Para detectar bordes (cambio) pág. 664 
+    GPIOA_AHB->IS |= (0<<5)|(0<<4)|(0<<3)|(0<<2)|(0<<1)|(0<<0); 
+    // Para que interrupción sea controlada por IEV pág. 665
+    // Segunda opción detecta los 2 bordes 
+    GPIOA_AHB->IBE |= (0<<5)|(0<<4)|(0<<3)|(0<<2)|(0<<1)|(0<<0);
+    // Para controlar con flanco de bajada (0) o flanco de subida (1)
+    GPIOA_AHB->IEV |= (1<<5)|(1<<4)|(1<<3)|(1<<2)|(1<<1)|(1<<0);
+    // No ha ocurrido una interrupción en los pines pág. 668
+    GPIOA_AHB->RIS |= (0<<5)|(0<<4)|(0<<3)|(0<<2)|(0<<1)|(0<<0);
+    // El nivel es detectado en el pin correspondiente 664
+    GPIOA_AHB->IM |= (1<<5)|(1<<4)|(1<<3)|(1<<2)|(1<<1)|(1<<0);
+    // Pág. 104 donde se indica el numero de interrupcion
+     // n=12 ----> [4n+3] [4n+2] [4n+1] [4n] ---> [4n+3]
+     // 0 es el número de prioridad 
+    NVIC->IP[0] = (NVIC->IP[0]&0xFFFFFF00) | 0x20000000;
+    // Habilitar la interrupción 
+    NVIC -> ISER[0] = 0x00000001;
+
 }
 
 extern void Delay(void)

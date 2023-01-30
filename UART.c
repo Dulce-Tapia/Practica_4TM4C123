@@ -6,7 +6,7 @@ extern void Configurar_UART3(void)
     SYSCTL->RCGCGPIO |= (1<<2);     //Paso 2 (RCGCGPIO) pag.340 Enable clock port A
     //(GPIOAFSEL) pag.671 Enable alternate function
     GPIOC->AFSEL = (1<<6) | (1<<7);
-    //GPIO Port Control (GPIOPCTL) PA0-> U0Rx PA1-> U0Tx pag.688
+    //GPIO Port Control (GPIOPCTL) PC6-> U3Rx PC7-> U3Tx pag.688
     GPIOC->PCTL = (GPIOC->PCTL&0x11FFFFFF) | 0x11000000;// (1<<0) | (1<<4);//0x00000011
     // GPIO Digital Enable (GPIODEN) pag.682
     GPIOC->DEN = (1<<6) | (1<<7);//PA1 PA0
@@ -15,10 +15,10 @@ extern void Configurar_UART3(void)
 
     // UART Integer Baud-Rate Divisor (UARTIBRD) pag.914
     /*
-    BRD = 33,000,000 / (16*19200) = 107.421875
-    UARTFBRD[DIVFRAC] = integer(.421875 * 64 + 0.5) = 27.5 
+    BRD = 80,000,000 / (16 * 19200) = 260.4166667
+    UARTFBRD[DIVFRAC] = integer(0.4166667 * 64 + 0.5) = 27
     */
-    UART3->IBRD = 107;
+    UART3->IBRD = 260;
     // UART Fractional Baud-Rate Divisor (UARTFBRD) pag.915
     UART3->FBRD = 27;
     //  UART Line Control (UARTLCRH) pag.916
@@ -27,17 +27,14 @@ extern void Configurar_UART3(void)
     UART3->CC =(0<<0);
     //Disable UART0 UART Control (UARTCTL) pag.918
     UART3->CTL = (1<<0) | (1<<8) | (1<<9);
-
-
-
 }
 
-extern void UART3_Transmitter(unsigned char Result,unsigned char Result1)  
+/*extern void UART3_Transmitter(unsigned char Result,unsigned char Result1)  
 {
     while((UART3->FR & (1<<5)) != 0 );
     UART3->DR =Result;
     UART3->DR =Result1;
-}
+}*/
 
 extern char readChar(void)
 {
